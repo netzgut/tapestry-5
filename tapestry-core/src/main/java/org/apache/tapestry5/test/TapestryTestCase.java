@@ -754,7 +754,7 @@ public abstract class TapestryTestCase extends IOCTestCase
             map.put(skey, properties.getProperty(skey));
         }
 
-        return new MapMessages(Locale.ENGLISH, map);
+        return new MapMessages(Locale.ENGLISH, map, "placeholder");
     }
 
     protected final FieldValidationSupport mockFieldValidationSupport()

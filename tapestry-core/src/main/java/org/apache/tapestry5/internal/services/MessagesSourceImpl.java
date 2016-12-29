@@ -12,17 +12,21 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,14 +71,18 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
+    private final String missingMessagesHandling;
+
     public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
-                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser)
+                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser,
+                              @Symbol(SymbolConstants.MISSING_MESSAGES_HANDLING) String missingMessagesHandling)
     {
         super(productionMode);
 
         this.tracker = tracker;
         this.propertiesFileParser = propertiesFileParser;
         this.resourceLocator = resourceLocator;
+        this.missingMessagesHandling = missingMessagesHandling;
     }
 
     public void checkForUpdates()
@@ -104,18 +112,21 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         if (result == null)
         {
-            result = buildMessages(bundle, selector);
+            result = buildMessages(bundle, selector, missingMessagesHandling);
             messagesByBundleIdAndSelector.put(key, result);
         }
 
         return result;
     }
 
-    private Messages buildMessages(MessagesBundle bundle, ComponentResourceSelector selector)
+    // for testing purposes we need to inject the logger in MapMessages.
+    // static initialization here for pettert berformance
+    private static final Logger mapMessagesLogger = LoggerFactory.getLogger(MapMessages.class);
+
+    private Messages buildMessages(MessagesBundle bundle, ComponentResourceSelector selector, String missingMessagesHandling)
     {
         Map<String, String> properties = findBundleProperties(bundle, selector);
-
-        return new MapMessages(selector.locale, properties);
+        return new MapMessages(selector.locale, properties, missingMessagesHandling, mapMessagesLogger);
     }
 
     /**

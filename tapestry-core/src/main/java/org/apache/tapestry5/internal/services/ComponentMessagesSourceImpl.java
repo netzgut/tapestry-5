@@ -71,22 +71,25 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public ComponentMessagesSourceImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
                                        boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
-                                       ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter)
+                                       ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter,
+                                       @Symbol(SymbolConstants.MISSING_MESSAGES_HANDLING) String missingMessagesHandling)
     {
-        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter));
+        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter), missingMessagesHandling);
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource,
-                                ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
+                                ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker,
+                                String missingMessagesHandling)
     {
-        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker);
+        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker, missingMessagesHandling);
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
-                                ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
+                                ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker,
+                                String missingMessagesHandling)
     {
         messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, resourceLocator,
-                parser);
+                parser, missingMessagesHandling);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
     }

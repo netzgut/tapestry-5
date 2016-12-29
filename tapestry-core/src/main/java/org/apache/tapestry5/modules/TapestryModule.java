@@ -2142,6 +2142,9 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.ENABLE_PAGELOADING_MASK, true);
         configuration.add(SymbolConstants.PRELOADER_MODE, PreloaderMode.PRODUCTION);
+        
+        // TAP5-2550
+        configuration.add(SymbolConstants.MISSING_MESSAGES_HANDLING, "placeholder");
     }
 
     /**

@@ -546,4 +546,12 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String PRELOADER_MODE = "tapestry.page-preload-mode";
+    
+    /**
+     * Specify how to handle a missing messages key. Available keys are <code>placeholder</code>,
+     * <code>warn</code> and <code>fail</code>. An empty string defaults to <code>placeholder</code>.
+     * The default value is: <code>placeholder</code>.
+     */
+    public static final String MISSING_MESSAGES_HANDLING= "tapestry.missing-messages-handling";
+    
 }
