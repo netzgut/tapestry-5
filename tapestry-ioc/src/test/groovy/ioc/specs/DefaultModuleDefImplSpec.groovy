@@ -488,4 +488,16 @@ class DefaultModuleDefImplSpec extends Specification {
 
     return plasticLoader.defineClassWithBytecode("EnhancedSyntheticMethodModule", bytecode)
   }
+  
+  @Issue('https://issues.apache.org/jira/browse/TAP5-2568')
+  def "Builder method by annotation @Build"() {
+    when:
+  
+    def md = module BuilderMethodByAnnotationModule
+  
+    then:
+  
+    md.getServiceDef("thisIsAlsoABuildMethod") != null
+  }
+  
 }

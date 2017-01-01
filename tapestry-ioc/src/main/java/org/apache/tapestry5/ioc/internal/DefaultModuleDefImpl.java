@@ -241,7 +241,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         {
             String name = m.getName();
 
-            if (name.startsWith(BUILD_METHOD_NAME_PREFIX))
+            if (name.startsWith(BUILD_METHOD_NAME_PREFIX) || m.isAnnotationPresent(Build.class))
             {
                 addServiceDef(m, modulePreventsServiceDecoration);
                 remainingMethods.remove(m);
@@ -431,6 +431,12 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private String stripMethodPrefix(Method method, String prefix)
     {
+        // We need to check first and not just trip the expected prefix.
+        // This was needed for TAP5-2568
+        if (method.getName().indexOf(prefix) != 0)
+        {
+            return method.getName();
+        }
         return method.getName().substring(prefix.length());
     }
 
